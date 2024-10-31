@@ -39,7 +39,7 @@ function App() {
           year: year,
         },
       });
-      
+      console.log(response.data.data);
       // Get today's prayer times
       const todaysData = response.data.data.find(
         (entry) => parseInt(entry.date.gregorian.day) === day
@@ -104,7 +104,7 @@ function App() {
   return (
     <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
       <Header date={prayerTimes.date} />
-      <h1 className="text-3xl text-center text-gray-800">Prayer Time App</h1>
+      <h1 className="text-3xl text-center text-gray-800">Prayer Time</h1>
       {Object.keys(prayerTimes).length > 0 ? (
         <>
           <PrayerList prayerTimes={prayerTimes.timings} mainPrayers={mainPrayers} />
