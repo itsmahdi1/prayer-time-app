@@ -18,8 +18,22 @@ function App() {
     targetDate.setDate(targetDate.getDate() + dayOffset);
     const month = targetDate.getMonth() + 1;
     const year = targetDate.getFullYear();
-    const day = targetDate.getDate();
 
+    // Create a unique key for the entire month (e.g., "2024-10")
+    const monthKey = `${year}-${month}`;
+
+    // 1. Check local storage for saved data for the entire month
+    const cachedData = localStorage.getItem(monthKey);
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      const dateIndex = targetDate.getDate() - 1; // Get the index for the current day
+      setPrayerTimes(parsedData[dateIndex].timings); // Get timings for the current day
+      setTimezone(parsedData[0].timezone); // Use timezone from the first entry
+      console.log("Loaded data from local storage for month:", monthKey);
+      return;
+    }
+
+    // 2. If not found in local storage, make an API request for the entire month
     try {
       const response = await axios.get("http://api.aladhan.com/v1/calendar", {
         params: {
@@ -30,15 +44,31 @@ function App() {
           year: year,
         },
       });
-      const dataForDay = response.data.data[day - 1];
-      const timings = Object.fromEntries(
-        Object.entries(dataForDay.timings).map(([key, time]) => [
-          key,
-          time.split(" ")[0],
-        ])
+
+      console.log("API Response:", response.data); // Inspect the response
+
+      const dataForMonth = response.data.data.map((dayData) => {
+        return {
+          date: dayData.date, // Save date info if needed
+          timings: Object.fromEntries(
+            Object.entries(dayData.timings).map(([key, time]) => [
+              key,
+              time.split(" ")[0],
+            ])
+          ),
+        };
+      });
+
+      // 3. Save the fetched data to state
+      setPrayerTimes(dataForMonth[targetDate.getDate() - 1].timings); // Get timings for the current day
+      setTimezone(response.data.meta?.timezone || "Unknown timezone");
+
+      // 4. Save data to local storage for future access
+      localStorage.setItem(monthKey, JSON.stringify(dataForMonth));
+      console.log(
+        "Fetched data from API and saved to local storage for month:",
+        monthKey
       );
-      setPrayerTimes(timings);
-      setTimezone(response.data.data[0].meta.timezone || "Unknown timezone");
     } catch (error) {
       console.error("Error fetching prayer times:", error);
     }
