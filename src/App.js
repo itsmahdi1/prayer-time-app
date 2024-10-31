@@ -43,60 +43,75 @@ function App() {
 
   const calculateNextPrayer = () => {
     const todayIndex = new Date().getDate() - 1;
-    const timings = prayerTimes[todayIndex]?.timings;
-    if (!timings) return;
+    const timingsToday = prayerTimes[todayIndex]?.timings;
+    const timingsTomorrow = prayerTimes[todayIndex + 1]?.timings;
 
     const now = new Date();
     let next = null;
     let nextPrayerName = "";
 
-    mainPrayers.some((prayer) => {
-      const time = timings[prayer];
-      if (!time) return false;
+    if (timingsToday) {
+      mainPrayers.some((prayer) => {
+        const time = timingsToday[prayer];
+        if (!time) return false;
 
-      const [hours, minutes] = time.split(":").map(Number);
-      const prayerTime = new Date();
-      prayerTime.setHours(hours, minutes, 0);
+        const [hours, minutes] = time.split(":").map(Number);
+        const prayerTime = new Date();
+        prayerTime.setHours(hours, minutes, 0);
 
-      if (prayerTime > now) {
-        next = prayerTime;
-        nextPrayerName = prayer;
-        return true;
-      }
-      return false;
-    });
+        if (prayerTime > now) {
+          next = prayerTime;
+          nextPrayerName = prayer;
+          return true;
+        }
+        return false;
+      });
+    }
+
+    if (!next && timingsTomorrow) {
+      const [hours, minutes] = timingsTomorrow["Fajr"].split(":").map(Number);
+      next = new Date();
+      next.setDate(next.getDate() + 1);
+      next.setHours(hours, minutes, 0);
+      nextPrayerName = "Fajr";
+    }
 
     if (next) {
       setNextPrayer(nextPrayerName);
       const timeDifference = next - now;
-      const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
-      const seconds = Math.floor((timeDifference / 1000) % 60);
-      setCountDown(`${hours}h ${minutes}m ${seconds}s`);
+
+      if (timeDifference > 0) {
+        const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeDifference / 1000) % 60);
+        setCountDown(`${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setCountDown("It's prayer time now!");
+      }
     } else {
-      setNextPrayer("Fajr");
-      setCountDown("Tomorrow");
+      setNextPrayer(null);
+      setCountDown("No prayers remaining today.");
     }
   };
 
   return (
-    <div>
-      <h1>Prayer Time App</h1>
+    <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl text-center text-gray-800">Prayer Time App</h1>
       {prayerTimes.length > 0 ? (
         <div>
-          <h2>Prayer times for Today</h2>
-          <ul>
+          <h2 className="text-2xl text-center text-gray-700 mt-4">Prayer Times for Today</h2>
+          <ul className="mt-4 space-y-4">
             {mainPrayers.map((prayer) => (
-              <li key={prayer}>
-                {prayer}: {prayerTimes[0].timings[prayer]}
+              <li key={prayer} className="bg-white p-4 rounded-lg shadow">
+                <span className="font-semibold">{prayer}:</span> {prayerTimes[0].timings[prayer]}
               </li>
             ))}
           </ul>
-          <h2>Next Prayer: {nextPrayer}</h2>
-          <p>Time Remaining:{countDown}</p>
+          <h2 className="text-2xl text-center text-gray-700 mt-4">Next Prayer: {nextPrayer}</h2>
+          <p className="text-center text-xl mt-2">Time Remaining: {countDown}</p>
         </div>
       ) : (
-        <p>Loading...</p>
+        <p className="text-center">Loading...</p>
       )}
     </div>
   );
