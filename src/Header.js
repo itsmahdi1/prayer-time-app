@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React from "react";
 
-const Header = () => {
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-
-    useEffect(() => {
-        const interval = setInterval(() => setCurrentDateTime(new Date()), 1000);
-        return () => clearInterval(interval);
-    }, []);
-    return (
-        <div className="text-center py-4">
-            <h1 className="text-xl font-semibold">
-                {currentDateTime.toLocaleDateString()} - {currentDateTime.toLocaleTimeString()}
-            </h1>
-        </div>
-    )
+function Header({ date, timezone }) {
+  return (
+    <header className="text-center my-4">
+      <h2 className="text-xl font-semibold">{date}</h2>
+      <p className="text-sm text-gray-600">{timezone}</p>
+    </header>
+  );
 }
 
-export default Header
+export default Header;
