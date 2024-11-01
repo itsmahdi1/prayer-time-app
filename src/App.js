@@ -16,7 +16,6 @@ function App() {
   const [nextPrayer, setNextPrayer] = useState(null);
   const [countDown, setCountDown] = useState("");
   const [dayOffset, setDayOffset] = useState(0);
-  const [timezone, setTimezone] = useState("Africa/Casablanca");
   const mainPrayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
   const fetchPrayerTimes = useCallback(async () => {
@@ -143,7 +142,7 @@ function App() {
   return (
     <div className="container mx-auto px-6 py-8 bg-white shadow-md rounded-lg min-h-screen">
       {/* Header */}
-      <Header timezone={timezone} />
+      <Header selectedLocation={selectedLocation.name} />
       <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Prayer Time App</h1>
 
       {/* Location Selector and Date Navigation */}
