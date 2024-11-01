@@ -141,38 +141,73 @@ function App() {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
+    <div className="container mx-auto px-6 py-8 bg-white shadow-md rounded-lg min-h-screen">
+      {/* Header */}
       <Header timezone={timezone} />
-      <h1 className="text-3xl text-center text-gray-800">Prayer Time App</h1>
-      <div className="flex justify-between">
-        <select onChange={handleLocationChange} value={selectedLocation.name}>
-          {locations.map((location) => (
-            <option key={location.name} value={location.name}>
-              {location.name}
-            </option>
-          ))}
-        </select>
-        <button onClick={handlePreviousDay}>&#8592; Previous Day</button>
-        <span>
-          {new Date(
-            new Date().setDate(new Date().getDate() + dayOffset)
-          ).toDateString()}
-        </span>
-        <button onClick={handleNextDay}>Next Day &#8594;</button>
+      <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Prayer Time App</h1>
+
+      {/* Location Selector and Date Navigation */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+        {/* Location Selector */}
+        <div className="w-full sm:w-auto">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            Select Location
+          </label>
+          <select
+            id="location"
+            onChange={handleLocationChange}
+            value={selectedLocation.name}
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >
+            {locations.map((location) => (
+              <option key={location.name} value={location.name}>
+                {location.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Date Navigation */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handlePreviousDay}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition duration-200"
+          >
+            &#8592; Previous Day
+          </button>
+          <span className="text-lg font-semibold text-gray-700">
+            {new Date(new Date().setDate(new Date().getDate() + dayOffset)).toDateString()}
+          </span>
+          <button
+            onClick={handleNextDay}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition duration-200"
+          >
+            Next Day &#8594;
+          </button>
+        </div>
       </div>
+
+      {/* Prayer Times */}
       {prayerTimes ? (
-        <>
-          <PrayerList
-            prayerTimes={prayerTimes}
-            mainPrayers={mainPrayers}
-            selectedLocation={selectedLocation.name}
-          />
-          <NextPrayerCountdown nextPrayer={nextPrayer} countDown={countDown} />
-        </>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {mainPrayers.map((prayer) => (
+            <div
+              key={prayer}
+              className="bg-blue-100 p-4 rounded-md shadow flex flex-col items-center"
+            >
+              <h2 className="text-xl font-semibold text-blue-800">{prayer}</h2>
+              <p className="text-2xl text-gray-800 font-bold mt-2">{prayerTimes[prayer]}</p>
+            </div>
+          ))}
+        </div>
       ) : (
-        <p className="text-center">Loading...</p>
+        <p className="text-center text-gray-600">Loading...</p>
       )}
+
+      {/* Next Prayer Countdown */}
+      <NextPrayerCountdown nextPrayer={nextPrayer} countDown={countDown} />
     </div>
+
   );
 }
 
