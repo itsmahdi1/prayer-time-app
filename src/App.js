@@ -140,23 +140,23 @@ function App() {
   };
 
   return (
-    <div className="container mx-auto px-6 py-8 bg-white shadow-md rounded-lg min-h-screen">
+    <div className="container mx-auto px-6 py-8 bg-gray-900 rounded-lg min-h-screen text-gray-100">
       {/* Header */}
       <Header selectedLocation={selectedLocation.name} />
-      <h1 className="text-4xl font-bold text-center text-blue-600 mb-8">Prayer Time App</h1>
+      <h1 className="text-4xl font-bold text-center text-teal-400 mb-8">Prayer Time Islamic</h1>
 
       {/* Location Selector and Date Navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
         {/* Location Selector */}
         <div className="w-full sm:w-auto">
-          <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-300">
             Select Location
           </label>
           <select
             id="location"
             onChange={handleLocationChange}
             value={selectedLocation.name}
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-1 block w-full py-2 px-3 border border-gray-600 bg-gray-800 text-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
           >
             {locations.map((location) => (
               <option key={location.name} value={location.name}>
@@ -170,21 +170,24 @@ function App() {
         <div className="flex items-center gap-4">
           <button
             onClick={handlePreviousDay}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition duration-200"
+            className="px-4 py-2 bg-teal-600 text-gray-100 rounded-md hover:bg-teal-700 transition duration-200"
           >
             &#8592; Previous Day
           </button>
-          <span className="text-lg font-semibold text-gray-700">
+          <span className="text-lg font-semibold text-gray-300">
             {new Date(new Date().setDate(new Date().getDate() + dayOffset)).toDateString()}
           </span>
           <button
             onClick={handleNextDay}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600 transition duration-200"
+            className="px-4 py-2 bg-teal-600 text-gray-100 rounded-md hover:bg-teal-700 transition duration-200"
           >
             Next Day &#8594;
           </button>
         </div>
       </div>
+
+      {/* Next Prayer Countdown */}
+      <NextPrayerCountdown nextPrayer={nextPrayer} countDown={countDown} />
 
       {/* Prayer Times */}
       {prayerTimes ? (
@@ -192,19 +195,17 @@ function App() {
           {mainPrayers.map((prayer) => (
             <div
               key={prayer}
-              className="bg-blue-100 p-4 rounded-md shadow flex flex-col items-center"
+              className="bg-gray-800 p-4 rounded-md flex flex-col items-center"
             >
-              <h2 className="text-xl font-semibold text-blue-800">{prayer}</h2>
-              <p className="text-2xl text-gray-800 font-bold mt-2">{prayerTimes[prayer]}</p>
+              <h2 className="text-xl font-semibold text-teal-400">{prayer}</h2>
+              <p className="text-2xl text-gray-100 font-bold mt-2">{prayerTimes[prayer]}</p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-600">Loading...</p>
+        <p className="text-center text-gray-500">Loading...</p>
       )}
 
-      {/* Next Prayer Countdown */}
-      <NextPrayerCountdown nextPrayer={nextPrayer} countDown={countDown} />
     </div>
 
   );
